@@ -1,5 +1,3 @@
-// Zadanie 3.1 — Zmienne i typy danych
-
 const imie = "Robert";        // string
 let wiek = 20;                 // number
 const czyStudent = true;       // boolean
@@ -18,5 +16,5 @@ console.log(typeof osoba);      // object
 //         zawartość obiektu/tablicy (bo const chroni referencję, nie zawartość)
 
 // Przykład — const nie chroni zawartości obiektu:
-osoba.wiek = 21; // to działa!
-console.log(osoba); // { imie: 'Robert', wiek: 21 }
+osoba.wiek = 17; // to działa!
+console.log(osoba); // { imie: 'Robert', wiek: 17 }

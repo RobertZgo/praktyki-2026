@@ -31,5 +31,5 @@ console.log(pełneInfo);
 
 // --- Template literals ---
 const imie = "Robert";
-const wiek = 20;
+const wiek = 17;
 console.log(`Cześć, mam na imię ${imie} i mam ${wiek} lat!`);
