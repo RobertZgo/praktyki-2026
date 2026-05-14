@@ -32,3 +32,12 @@
 //  "title": "Zaktualizowane zadanie",
 //  "done": true
 //}
+## GET /categories
+- Żądanie: GET http://localhost:3000/categories
+- Wynik: lista kategorii z bazy ✅
+
+## POST /categories
+- Żądanie: POST http://localhost:3000/categories
+- Body: { "name": "Testowa" }
+- Wynik: 201 Created ✅
+- Ponowne żądanie: 409 Conflict ✅
