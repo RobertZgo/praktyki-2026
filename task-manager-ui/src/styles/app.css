@@ -1,0 +1,45 @@
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  font-family: sans-serif;
+}
+
+.stats {
+  margin-bottom: 20px;
+  padding: 10px;
+  background: #e9ecef;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filters button {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.filters button.active {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}

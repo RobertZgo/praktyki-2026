@@ -3,71 +3,70 @@ import Header from "./components/Header";
 import TaskList from "./components/TaskList";
 import TaskForm from "./components/TaskForm";
 import { fetchTasks, fetchCategories, createTask, deleteTask, updateTask } from "./services/api";
+import "./styles/App.css";
 
 function App() {
   const [tasks, setTasks] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [tasksData, categoriesData] = await Promise.all([fetchTasks(), fetchCategories()]);
-        setTasks(tasksData);
-        setCategories(categoriesData);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, []);
-
-  const handleTaskCreated = async (taskData) => {
+  const loadData = async () => {
     try {
-      const newTask = await createTask(taskData);
-      setTasks([...tasks, newTask]);
-    } catch (err) { alert(err.message); }
+      const [t, c] = await Promise.all([fetchTasks(), fetchCategories()]);
+      setTasks(t);
+      setCategories(c);
+    } catch (err) { console.error(err.message); }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { loadData(); }, []);
+
+  const handleTaskCreated = async (data) => {
+    const newTask = await createTask(data);
+    setTasks([...tasks, newTask]);
   };
 
   const handleToggleTask = async (id, done) => {
-    try {
-      const updated = await updateTask(id, { done });
-      setTasks(tasks.map((t) => (t.id === id ? { ...t, ...updated } : t)));
-    } catch (err) { alert(err.message); }
+    const updated = await updateTask(id, { done });
+    setTasks(tasks.map(t => t.id === id ? { ...t, ...updated } : t));
   };
 
   const handleUpdateTask = async (id, data) => {
-    try {
-      const updated = await updateTask(id, data);
-      setTasks(tasks.map((t) => (t.id === id ? { ...t, ...updated } : t)));
-    } catch (err) { alert(err.message); }
+    const updated = await updateTask(id, data);
+    setTasks(tasks.map(t => t.id === id ? { ...t, ...updated } : t));
   };
 
   const handleDeleteTask = async (id) => {
-    if (!window.confirm("Na pewno usunąć to zadanie?")) return;
-    try {
-      await deleteTask(id);
-      setTasks(tasks.filter((t) => t.id !== id));
-    } catch (err) { alert(err.message); }
+    if (!window.confirm("Usunąć?")) return;
+    await deleteTask(id);
+    setTasks(tasks.filter(t => t.id !== id));
   };
 
+  const filteredTasks = tasks.filter(t => {
+    if (filter === "todo") return !t.done;
+    if (filter === "done") return t.done;
+    return true;
+  });
+
   return (
-    <div style={{ maxWidth: "600px", margin: "0 auto", padding: "20px", fontFamily: "sans-serif" }}>
+    <div className="container">
       <Header title="Task Manager" />
       <TaskForm categories={categories} onTaskCreated={handleTaskCreated} />
-      {loading && <p>Ładowanie...</p>}
-      {error && <p style={{ color: "red" }}>Błąd: {error}</p>}
-      {!loading && !error && (
-        <TaskList 
-          tasks={tasks} 
-          onToggle={handleToggleTask} 
-          onDelete={handleDeleteTask}
-          onUpdate={handleUpdateTask}
-        />
-      )}
+      
+      <div className="stats">
+        Zadania: <b>{tasks.length}</b> łącznie | <b>{tasks.filter(t => !t.done).length}</b> do zrobienia
+      </div>
+
+      <div className="filters">
+        <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("all")}>Wszystkie</button>
+        <button className={filter === "todo" ? "active" : ""} onClick={() => setFilter("todo")}>Do zrobienia</button>
+        <button className={filter === "done" ? "active" : ""} onClick={() => setFilter("done")}>Wykonane</button>
+      </div>
+
+      {loading ? <p>Ładowanie...</p> : 
+        <TaskList tasks={filteredTasks} onToggle={handleToggleTask} onDelete={handleDeleteTask} onUpdate={handleUpdateTask} />
+      }
     </div>
   );
 }
