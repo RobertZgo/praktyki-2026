@@ -6,10 +6,10 @@ function TaskList({ tasks, onToggle, onDelete, onUpdate }) {
   return (
     <ul style={{ listStyle: "none", padding: 0 }}>
       {tasks.map((task) => (
-        <TaskItem 
-          key={task.id} 
-          task={task} 
-          onToggle={onToggle} 
+        <TaskItem
+          key={task.id}
+          task={task}
+          onToggle={onToggle}
           onDelete={onDelete}
           onUpdate={onUpdate}
         />

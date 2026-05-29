@@ -18,16 +18,23 @@ function TaskForm({ categories, onTaskCreated }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
+    <form
+      onSubmit={handleSubmit}
+      style={{ marginBottom: "20px", display: "flex", gap: "10px" }}
+    >
       <input
         type="text"
         placeholder="Co jest do zrobienia?"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        autoFocus
         required
       />
-      
-      <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
+
+      <select
+        value={categoryId}
+        onChange={(e) => setCategoryId(e.target.value)}
+      >
         <option value="">-- Bez kategorii --</option>
         {categories.map((cat) => (
           <option key={cat.id} value={cat.id}>

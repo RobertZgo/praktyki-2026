@@ -1,0 +1,11 @@
+### Pobierz zadania
+GET http://localhost:4000/tasks
+
+### Dodaj zadanie
+POST http://localhost:4000/tasks
+Content-Type: application/json
+
+{
+  "title": "Testowy task z dokumentacji",
+  "category_id": 1
+}

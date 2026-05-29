@@ -38,10 +38,10 @@ const createTask = async (req, res, next) => {
     if (!title || title.trim().length === 0) {
       return res.status(400).json({ error: "Tytuł jest wymagany" });
     }
-    const [result] = await pool.query(
-      "INSERT INTO tasks (title, category_id) VALUES (?, ?)",
-      [title.trim(), category_id || null]
-    );
+    const [result] = await pool.query("INSERT INTO tasks (title, category_id) VALUES (?, ?)", [
+      title.trim(),
+      category_id || null,
+    ]);
     const [rows] = await pool.query("SELECT * FROM tasks WHERE id = ?", [result.insertId]);
     res.status(201).json(rows[0]);
   } catch (err) {
@@ -56,9 +56,11 @@ const updateTask = async (req, res, next) => {
     const [existing] = await pool.query("SELECT * FROM tasks WHERE id = ?", [id]);
     if (existing.length === 0) return res.status(404).json({ error: "Nie znaleziono zadania" });
 
-    if (title !== undefined) await pool.query("UPDATE tasks SET title = ? WHERE id = ?", [title, id]);
+    if (title !== undefined)
+      await pool.query("UPDATE tasks SET title = ? WHERE id = ?", [title, id]);
     if (done !== undefined) await pool.query("UPDATE tasks SET done = ? WHERE id = ?", [done, id]);
-    if (category_id !== undefined) await pool.query("UPDATE tasks SET category_id = ? WHERE id = ?", [category_id, id]);
+    if (category_id !== undefined)
+      await pool.query("UPDATE tasks SET category_id = ? WHERE id = ?", [category_id, id]);
 
     const [rows] = await pool.query("SELECT * FROM tasks WHERE id = ?", [id]);
     res.json(rows[0]);
