@@ -1,144 +1,66 @@
-import { useState, useEffect } from "react";
-import Header from "./components/Header";
-import TaskList from "./components/TaskList";
+import { useState } from "react";
+import { useTasks } from "./hooks/useTasks";
+import './styles/app.css';
 import TaskForm from "./components/TaskForm";
-import {
-  fetchTasks,
-  fetchCategories,
-  createTask,
-  deleteTask,
-  updateTask,
-} from "./services/api";
-import "./styles/App.css";
+import TaskList from "./components/TaskList";
+import Header from "./components/Header";
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [filter, setFilter] = useState("all");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [sortBy, setSortBy] = useState("date"); 
 
-  // Przenosimy loadData tutaj, żeby linter nie sypał błędami
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const [tasksData, categoriesData] = await Promise.all([
-          fetchTasks(),
-          fetchCategories(),
-        ]);
-        setTasks(tasksData);
-        setCategories(categoriesData);
-        setError(null);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+    const { tasks, loading, error, addTask, updateTask, deleteTask } = useTasks(searchTerm);
+
+    const getSortedTasks = () => {
+        const tasksCopy = [...tasks];
+        
+        if (sortBy === "title") {
+            return tasksCopy.sort((a, b) => a.title.localeCompare(b.title));
+        }
+        if (sortBy === "status") {
+            return tasksCopy.sort((a, b) => a.done - b.done);
+        }
+        return tasksCopy.sort((a, b) => b.id - a.id);
     };
 
-    loadData();
-  }, []);
+    const sortedTasks = getSortedTasks();
 
-  const handleTaskCreated = async (taskData) => {
-    try {
-      const newTask = await createTask(taskData);
-      setTasks([...tasks, newTask]);
-    } catch (err) {
-      alert(err.message);
-    }
-  };
+    return (
+        <div className="container">
+            <Header />
+            
+            <TaskForm onAddTask={addTask} />
 
-  const handleToggleTask = async (id, done) => {
-    try {
-      const updated = await updateTask(id, { done });
-      setTasks(tasks.map((t) => (t.id === id ? { ...t, ...updated } : t)));
-    } catch (err) {
-      alert(err.message);
-    }
-  };
+            <div className="search-sort-group">
+                <input
+                    type="text"
+                    placeholder="Wyszukaj zadanie..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                >
+                    <option value="date">Sortuj po: dacie utworzenia</option>
+                    <option value="title">Sortuj po: tytule</option>
+                    <option value="status">Sortuj po: statusie</option>
+                </select>
+            </div>
 
-  const handleUpdateTask = async (id, data) => {
-    try {
-      const updated = await updateTask(id, data);
-      setTasks(tasks.map((t) => (t.id === id ? { ...t, ...updated } : t)));
-    } catch (err) {
-      alert(err.message);
-    }
-  };
+            {loading && <div className="loader"></div>}
+            {error && <p style={{ color: "var(--danger)", textAlign: "center" }}>Błąd: {error}</p>}
 
-  const handleDeleteTask = async (id) => {
-    if (!window.confirm("Na pewno usunąć?")) return;
-    try {
-      await deleteTask(id);
-      setTasks(tasks.filter((t) => t.id !== id));
-    } catch (err) {
-      alert(err.message);
-    }
-  };
-
-  const filteredTasks = tasks.filter((t) => {
-    if (filter === "todo") return !t.done;
-    if (filter === "done") return t.done;
-    return true;
-  });
-
-  const stats = {
-    total: tasks.length,
-    todo: tasks.filter((t) => !t.done).length,
-    done: tasks.filter((t) => t.done).length,
-  };
-
-  return (
-    <div className="container">
-      <Header title="Task Manager" />
-      <TaskForm categories={categories} onTaskCreated={handleTaskCreated} />
-
-      <div className="stats">
-        Zadania: <b>{stats.total}</b> łącznie | <b>{stats.todo}</b> do zrobienia
-        | <b>{stats.done}</b> wykonane
-      </div>
-
-      <div className="filters">
-        <button
-          className={filter === "all" ? "active" : ""}
-          onClick={() => setFilter("all")}
-        >
-          Wszystkie
-        </button>
-        <button
-          className={filter === "todo" ? "active" : ""}
-          onClick={() => setFilter("todo")}
-        >
-          Do zrobienia
-        </button>
-        <button
-          className={filter === "done" ? "active" : ""}
-          onClick={() => setFilter("done")}
-        >
-          Wykonane
-        </button>
-      </div>
-
-      {loading ? (
-        <div className="loader"></div>
-      ) : (
-        <TaskList
-          tasks={filteredTasks}
-          onToggle={handleToggleTask}
-          onDelete={handleDeleteTask}
-          onUpdate={handleUpdateTask}
-        />
-      )}
-
-      {error && (
-        <p style={{ color: "red", textAlign: "center", marginTop: "20px" }}>
-          ⚠️ Problem z połączeniem. Upewnij się, że serwer i baza danych są
-          włączone.
-        </p>
-      )}
-    </div>
-  );
+            {!loading && !error && (
+               <TaskList 
+                   tasks={sortedTasks} 
+                    onToggle={(id, newDoneState) => updateTask(id, { done: newDoneState })} 
+                    onUpdateTask={updateTask} 
+                    onDeleteTask={deleteTask} 
+/>
+            )}
+        </div>
+    );
 }
 
 export default App;

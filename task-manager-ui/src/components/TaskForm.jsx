@@ -1,50 +1,48 @@
 import { useState } from "react";
 
-function TaskForm({ categories, onTaskCreated }) {
+function TaskForm({ onAddTask }) {
   const [title, setTitle] = useState("");
-  const [categoryId, setCategoryId] = useState("");
+  const [priority, setPriority] = useState("medium");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (title.trim().length === 0) return;
+    if (!title.trim()) return;
 
-    onTaskCreated({
-      title: title.trim(),
-      category_id: categoryId === "" ? null : Number(categoryId),
-    });
-
-    setTitle("");
-    setCategoryId("");
+    try {
+      await onAddTask({
+        title: title.trim(),
+        priority: priority,
+      });
+      setTitle("");
+      setPriority("medium");
+    } catch (err) {
+      console.error("Blad podczas dodawania zadania w formularzu:", err);
+    }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{ marginBottom: "20px", display: "flex", gap: "10px" }}
-    >
-      <input
-        type="text"
-        placeholder="Co jest do zrobienia?"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        autoFocus
-        required
-      />
+    <form onSubmit={handleSubmit} className="task-form">
+      <div className="form-group">
+        <label>NAZWA ZADANIA</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Co jest do zrobienia?"
+        />
+      </div>
 
-      <select
-        value={categoryId}
-        onChange={(e) => setCategoryId(e.target.value)}
-      >
-        <option value="">-- Bez kategorii --</option>
-        {categories.map((cat) => (
-          <option key={cat.id} value={cat.id}>
-            {cat.name}
-          </option>
-        ))}
-      </select>
+      <div className="form-group">
+        <label>PRIORYTET</label>
+        <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+          <option value="low">Niski (Low)</option>
+          <option value="medium">Średni (Medium)</option>
+          <option value="high">Wysoki (High)</option>
+        </select>
+      </div>
 
-      <button type="submit" disabled={title.trim().length === 0}>
-        Dodaj
+      <button type="submit" className="btn-submit">
+        Dodaj zadanie
       </button>
     </form>
   );

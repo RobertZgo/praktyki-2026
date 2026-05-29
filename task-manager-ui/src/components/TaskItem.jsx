@@ -15,6 +15,13 @@ function TaskItem({ task, onToggle, onDelete, onUpdate }) {
     setDraftTitle(task.title);
   };
 
+  const handleDeleteClick = () => {
+    const confirmDelete = window.confirm(`Czy na pewno chcesz usunąć zadanie: "${task.title}"?`);
+    if (confirmDelete) {
+      onDelete(task.id);
+    }
+  };
+
   if (isEditing) {
     return (
       <li className="task-item">
@@ -34,21 +41,24 @@ function TaskItem({ task, onToggle, onDelete, onUpdate }) {
     );
   }
 
-  return (
-    <li className={`task-item ${task.done ? "done" : ""}`}>
+return (
+    <li 
+      className={`task-item ${task.done ? "completed" : ""}`}
+      data-priority={task.priority || "medium"}
+    >
       <input
         type="checkbox"
         checked={!!task.done}
         onChange={() => onToggle(task.id, !task.done)}
       />
-      <span style={{ flexGrow: 1 }}>
+      <span>
         {task.title}{" "}
         {task.category && (
-          <small style={{ color: "#666" }}>({task.category})</small>
+          <small>({task.category})</small>
         )}
       </span>
       <button onClick={() => setIsEditing(true)}>Edytuj</button>
-      <button onClick={() => onDelete(task.id)} style={{ color: "red" }}>
+      <button onClick={handleDeleteClick}>
         Usuń
       </button>
     </li>

@@ -1,69 +1,262 @@
+:root {
+  --bg-main: #050508;
+  --panel-bg: rgba(15, 15, 22, 0.65);
+  --panel-border: rgba(255, 90, 40, 0.05);
+  --text-main: #f5f5f7;
+  --text-muted: #7c7c8a;
+  --accent: #ff5a28;
+  --accent-glow: rgba(255, 90, 40, 0.25);
+  --accent-dim: rgba(255, 90, 40, 0.1);
+  --danger: #ef4444;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: var(--bg-main);
+  background-image: radial-gradient(circle at 50% 30%, rgba(255, 90, 40, 0.08) 0%, transparent 60%);
+  font-family: system-ui, -apple-system, sans-serif;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .container {
+  width: 100%;
   max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-family: sans-serif;
+  margin: 20px;
+  padding: 32px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--panel-border);
+  border-radius: 28px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8),
+              0 0 80px rgba(255, 90, 40, 0.03);
 }
 
 .stats {
-  margin-bottom: 20px;
-  padding: 10px;
-  background: #e9ecef;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  margin-bottom: 24px;
+  padding: 14px 20px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
 }
 
 .filters {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin-bottom: 24px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px;
+  border-radius: 12px;
 }
 
 .filters button {
-  padding: 8px 16px;
-  border: 1px solid #ddd;
-  background: white;
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.85rem;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.filters button:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .filters button.active {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid rgba(255, 90, 40, 0.2);
+  box-shadow: inset 0 0 12px rgba(255, 90, 40, 0.1);
+}
+
+.container label,
+.container div > label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+
+.container input[type="text"],
+.container select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 18px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+
+.container select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%237c7c8a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 14px;
+  padding-right: 44px;
+}
+
+.container select option {
+  background: #0d0d12;
+  color: var(--text-main);
+}
+
+.container input[type="text"]:focus,
+.container select:focus {
+  outline: none;
+  border-color: rgba(255, 90, 40, 0.3);
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 20px rgba(255, 90, 40, 0.05);
+}
+
+.container button:not(.delete-btn):not(.filters button):not(.task-item button),
+.complete-all-btn {
+  width: 100%;
+  padding: 14px;
+  background: rgba(255, 90, 40, 0.1);
+  border: 1px solid rgba(255, 90, 40, 0.3);
+  border-radius: 14px;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-bottom: 16px;
+}
+
+.container button:not(.delete-btn):not(.filters button):not(.task-item button):hover,
+.complete-all-btn:hover {
+  background: var(--accent);
+  color: #000000;
+  box-shadow: 0 0 24px var(--accent-glow);
 }
 
 .task-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-}
-/* Naprawa BUG-001: Zawijanie długich nazw */
-.task-item span {
-  word-break: break-all;
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  border-radius: 16px;
+  margin-bottom: 12px;
+  transition: all 0.25s ease;
 }
 
-/* Zadanie 2.3: CSS Spinner */
+.task-item:hover {
+  background: rgba(255, 90, 40, 0.02);
+  border-color: rgba(255, 90, 40, 0.1);
+}
+
+.task-item span {
+  font-size: 0.95rem;
+  color: var(--text-main);
+  word-break: break-all;
+  flex: 1;
+}
+
+.task-item.completed span {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  opacity: 0.4;
+}
+
+.task-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--text-muted);
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  display: grid;
+  place-content: center;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.task-item input[type="checkbox"]:hover {
+  border-color: var(--accent);
+}
+
+.task-item input[type="checkbox"]:checked,
+.task-item.completed input[type="checkbox"] {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+}
+
+.task-item input[type="checkbox"]:checked::before,
+.task-item.completed input[type="checkbox"]::before {
+  content: "✓";
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.task-item button {
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.task-item button:first-of-type:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.task-item button:last-of-type:hover {
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
 .loader {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #007bff;
+  border: 3px solid rgba(255, 90, 40, 0.05);
+  border-top: 3px solid var(--accent);
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  animation: spin 1s linear infinite;
-  margin: 20px auto;
+  width: 32px;
+  height: 32px;
+  animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  margin: 24px auto;
+  filter: drop-shadow(0 0 8px var(--accent-glow));
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
